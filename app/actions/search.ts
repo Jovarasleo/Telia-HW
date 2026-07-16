@@ -4,6 +4,10 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { fetchPokemon } from "../services/pokemon";
 
+type State = {
+  error?: string;
+};
+
 const schema = z.object({
   pokemonName: z
     .string()
@@ -13,46 +17,69 @@ const schema = z.object({
     .max(50, "Name must be less than 50 characters"),
 });
 
-type State = {
-  error?: string;
-};
+function getPokemonName(formData: FormData): string {
+  return formData.get("pokemonName")?.toString() ?? "";
+}
 
-export async function search(
-  prevState: State,
-  formData: FormData,
-): Promise<State> {
-  const pokemonName = formData.get("pokemonName")?.toString() ?? "";
-  const validatedFields = schema.safeParse({
-    pokemonName,
-  });
-
-  if (!validatedFields.success) {
-    const validationErrors = validatedFields.error.issues
-      .map((issue) => issue.message)
-      .join(", ");
-
+function validatePokemonName(
+  pokemonName: string,
+): { success: true; name: string } | { success: false; error: string } {
+  const result = schema.safeParse({ pokemonName });
+  if (!result.success) {
     return {
-      error: validationErrors,
+      success: false,
+      error: result.error.issues.map((issue) => issue.message).join(", "),
     };
   }
 
-  const { pokemonName: sanitizedName } = validatedFields.data;
-  try {
-    const data = await fetchPokemon(sanitizedName);
-    const status = data instanceof Response ? data.status : undefined;
+  return {
+    success: true,
+    name: result.data.pokemonName,
+  };
+}
 
-    if (status === 404) {
+async function pokemonExists(
+  pokemonName: string,
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    const response = await fetchPokemon(pokemonName);
+    if (response instanceof Response && response.status === 404) {
       return {
+        success: false,
         error: "Pokemon not found",
       };
     }
+
+    return { success: true };
   } catch (ex) {
     console.error(ex);
 
     return {
+      success: false,
       error: "Something went wrong",
     };
   }
+}
 
-  redirect(`/pokemon/${encodeURIComponent(sanitizedName)}`);
+export async function searchPokemon(
+  _: State,
+  formData: FormData,
+): Promise<State> {
+  const pokemonName = getPokemonName(formData);
+
+  const validation = validatePokemonName(pokemonName);
+  if (!validation.success) {
+    return {
+      error: validation.error,
+    };
+  }
+
+  const lookup = await pokemonExists(validation.name);
+  if (!lookup.success) {
+    return {
+      error: lookup.error,
+    };
+  }
+
+  redirect(`/pokemon/${encodeURIComponent(validation.name)}`);
 }

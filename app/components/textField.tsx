@@ -9,7 +9,7 @@ export interface TextFieldProps<
   T = HTMLInputElement,
 > extends AriaTextFieldProps {
   label?: string;
-  serverError?: string;
+  error?: string;
   placeholder?: string;
   defaultValue?: string;
   inputRef?: React.Ref<T>;
@@ -18,14 +18,14 @@ export interface TextFieldProps<
 
 export function TextField({
   label,
-  serverError,
+  error,
   placeholder,
   inputRef,
   loading,
   ...props
 }: TextFieldProps) {
   const errorId = `${props.name}-error`;
-  const hasErrors = Boolean(serverError);
+  const hasErrors = Boolean(error);
 
   return (
     <AriaTextField {...props}>
@@ -34,6 +34,7 @@ export function TextField({
         ref={inputRef}
         aria-invalid={hasErrors}
         disabled={loading}
+        type="text"
         className="w-80 rounded-md border border-gray-300
             px-3 py-2 text-sm
             shadow-sm
@@ -44,11 +45,11 @@ export function TextField({
             disabled:cursor-not-allowed
             disabled:bg-gray-100"
         placeholder={placeholder}
-        aria-describedby={serverError ? errorId : undefined}
+        aria-describedby={error ? errorId : undefined}
       />
       {hasErrors && (
         <span id={errorId} className="text-red-800">
-          {serverError}
+          {error}
         </span>
       )}
     </AriaTextField>

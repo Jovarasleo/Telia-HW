@@ -1,11 +1,14 @@
 import { useActionState } from "react";
 import { Button, Form } from "react-aria-components";
-import { search } from "./actions/search";
+import { searchPokemon } from "./actions/search";
 import { TextField } from "./components/textField";
 
 export default function SearchForm() {
   const initialState = { error: undefined };
-  const [state, formAction, pending] = useActionState(search, initialState);
+  const [state, formAction, pending] = useActionState(
+    searchPokemon,
+    initialState,
+  );
 
   return (
     <Form action={formAction}>
@@ -14,9 +17,8 @@ export default function SearchForm() {
         label="Enter Pokemon name:"
         className="flex-col flex"
         loading={pending}
-        serverError={state.error}
+        error={state.error}
       />
-
       <Button
         type="submit"
         isDisabled={pending}

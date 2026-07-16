@@ -36,32 +36,27 @@ export function PokemonDetails({ pokemon }: PokemonDetailsProps) {
         />
       )}
       <div>
-        <p className="font-medium">Height</p>
+        <p className="font-bold">Height</p>
         <p>{pokemon.height}</p>
       </div>
 
       <div>
-        <p className="font-medium">Weight</p>
+        <p className="font-bold">Weight</p>
         <p>{pokemon.weight}</p>
       </div>
 
-      <div>
-        <p className="font-medium">Height</p>
-        <p>{pokemon.height}</p>
-      </div>
-
       <div className="col-span-2">
-        <dt className="font-medium">Types</dt>
-        <dd className="flex gap-2">
-          {pokemon.types.map(({ type }) => (
+        <p className="font-bold">Types</p>
+        <div className="flex gap-2">
+          {pokemon.types.map(({ type: { name } }) => (
             <span
-              key={type.name}
+              key={name}
               className="rounded bg-slate-200 px-2 py-1 capitalize"
             >
-              {type.name}
+              {name}
             </span>
           ))}
-        </dd>
+        </div>
       </div>
     </section>
   );
