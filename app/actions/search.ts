@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { redirect } from "next/navigation";
-import { fetchPokemon } from "../services/pokemon";
+import { fetchPokemon } from "../api/pokemon";
 
 type State = {
   error?: string;
@@ -17,13 +17,12 @@ const schema = z.object({
     .max(50, "Name must be less than 50 characters"),
 });
 
-function getPokemonName(formData: FormData): string {
-  return formData.get("pokemonName")?.toString() ?? "";
-}
+const getPokemonName = (formData: FormData): string =>
+  formData.get("pokemonName")?.toString() ?? "";
 
-function validatePokemonName(
+const validatePokemonName = (
   pokemonName: string,
-): { success: true; name: string } | { success: false; error: string } {
+): { success: true; name: string } | { success: false; error: string } => {
   const result = schema.safeParse({ pokemonName });
   if (!result.success) {
     return {
@@ -36,11 +35,11 @@ function validatePokemonName(
     success: true,
     name: result.data.pokemonName,
   };
-}
+};
 
-async function pokemonExists(
+const pokemonExists = async (
   pokemonName: string,
-): Promise<{ success: true } | { success: false; error: string }> {
+): Promise<{ success: true } | { success: false; error: string }> => {
   try {
     const response = await fetchPokemon(pokemonName);
     if (response instanceof Response && response.status === 404) {
@@ -59,15 +58,15 @@ async function pokemonExists(
       error: "Something went wrong",
     };
   }
-}
+};
 
-export async function searchPokemon(
+export const searchPokemon = async (
   _: State,
   formData: FormData,
-): Promise<State> {
+): Promise<State> => {
   const pokemonName = getPokemonName(formData);
-
   const validation = validatePokemonName(pokemonName);
+
   if (!validation.success) {
     return {
       error: validation.error,
@@ -82,4 +81,4 @@ export async function searchPokemon(
   }
 
   redirect(`/pokemon/${encodeURIComponent(validation.name)}`);
-}
+};

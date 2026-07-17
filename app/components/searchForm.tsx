@@ -1,9 +1,11 @@
+"use client";
+
 import { useActionState } from "react";
 import { Button, Form } from "react-aria-components";
-import { searchPokemon } from "./actions/search";
-import { TextField } from "./components/textField";
+import { searchPokemon } from "../actions/search";
+import { TextField } from "./textField";
 
-export default function SearchForm() {
+export const SearchForm = () => {
   const initialState = { error: undefined };
   const [state, formAction, pending] = useActionState(
     searchPokemon,
@@ -34,4 +36,4 @@ export default function SearchForm() {
       </Button>
     </Form>
   );
-}
+};

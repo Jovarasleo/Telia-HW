@@ -1,5 +1,6 @@
 import { PokemonDetails } from "@/app/components/pokemonDetails";
-import { fetchPokemon } from "@/app/services/pokemon";
+import { SearchForm } from "@/app/components/searchForm";
+import { fetchPokemon } from "@/app/api/pokemon";
 import { notFound } from "next/navigation";
 
 export default async function PokemonPage({
@@ -16,5 +17,10 @@ export default async function PokemonPage({
 
   const pokemon = await response.json();
 
-  return <PokemonDetails pokemon={pokemon} />;
+  return (
+    <div className="flex flex-col items-center justify-center gap-5">
+      <PokemonDetails pokemon={pokemon} />
+      <SearchForm />
+    </div>
+  );
 }

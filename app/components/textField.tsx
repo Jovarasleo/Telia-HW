@@ -16,14 +16,14 @@ export interface TextFieldProps<
   loading?: boolean;
 }
 
-export function TextField({
+export const TextField = ({
   label,
   error,
   placeholder,
   inputRef,
   loading,
   ...props
-}: TextFieldProps) {
+}: TextFieldProps) => {
   const errorId = `${props.name}-error`;
   const hasErrors = Boolean(error);
 
@@ -54,4 +54,4 @@ export function TextField({
       )}
     </AriaTextField>
   );
-}
+};

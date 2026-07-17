@@ -1,6 +1,6 @@
 "use client";
 
-import SearchForm from "./searchForm";
+import { SearchForm } from "./components/searchForm";
 
 export default function Page() {
   return (
