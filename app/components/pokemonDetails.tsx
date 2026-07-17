@@ -1,19 +1,5 @@
 import Image from "next/image";
-
-interface Pokemon {
-  id: number;
-  name: string;
-  height: number;
-  weight: number;
-  sprites: {
-    front_default: string | null;
-  };
-  types: {
-    type: {
-      name: string;
-    };
-  }[];
-}
+import { Pokemon } from "../api/pokemon";
 
 type PokemonDetailsProps = {
   pokemon: Pokemon;
